@@ -42,17 +42,20 @@ describe('server', () => {
 describe('POST /LOGIN', () => {
   it('should return 200 status', () => {
   })
-  it('username should be {Name}', () => {
-    return request(server).post('/api/login')
+  it('Token should exist', async () => {
+    // await db.seed.run()
+    await db('users').insert([
+      { username: "admin", password: bcrypt.hashSync("admin", 16) },
+      { username: "testuser", password: bcrypt.hashSync("test", 16) }
+    ])
+    const res = await request(server).post('/api/login')
       .send({
         username: "admin",
         password: "admin"
       })
       .set('Content-Type', 'application/json')
-      .then(res => {
-        expect(res.status).toBe(200)
-        expect(res.body.username).toBe('admin')
-      })
+    expect(res.status).toBe(200)
+    expect(res.body.token).toBeTruthy()
   })
 })
 
